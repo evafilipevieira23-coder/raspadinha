@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspadinha Online</title>
+    <title>Raspadinha - Amor às Pedaços</title>
     <link href="https://fonts.googleapis.com/css2?family=Chau+Philomene+One&display=swap" rel="stylesheet">
     <style>
         body {
@@ -13,15 +13,15 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #ffffff;
+            background-color: #ebc5d0; /* Rosa Marca */
             font-family: 'Chau Philomene One', sans-serif;
-            color: #5e3427; /* Castanho para todo o texto */
+            color: #5e3427; /* Castanho Marca */
+            overflow: hidden;
         }
 
-        /* TEXTO EXTERIOR (Página 1) */
         .header-container {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .header-container h1 {
@@ -29,30 +29,25 @@
             margin: 0;
             line-height: 1.1;
             text-transform: uppercase;
-            color: #5e3427; /* Castanho */
         }
 
         .header-container h2 {
-            font-size: 24px;
-            margin: 10px 0 0 0;
-            color: #ebc5d0; /* Rosa */
-            /* Outline em castanho para leitura sobre fundo branco */
-            -webkit-text-stroke: 1px #5e3427; 
+            font-size: 22px;
+            margin: 5px 0 0 0;
             text-transform: uppercase;
         }
 
-        /* MOLDURA DA RASPADINHA */
         #wrapper {
             position: relative;
             width: 300px;
             height: 300px;
-            border: 5px solid #5e3427; /* Castanho */
-            border-radius: 15px;
-            background-color: #ebc5d0; /* Rosa */
+            border: 5px solid #5e3427;
+            border-radius: 20px;
+            background-color: #ebc5d0;
             overflow: hidden;
+            box-shadow: 0 10px 25px rgba(94, 52, 39, 0.3);
         }
 
-        /* PRÉMIO (Página 2 - Por baixo da raspadinha) */
         #prize-layer {
             position: absolute;
             top: 0; left: 0;
@@ -70,17 +65,15 @@
         #prize-layer h3 {
             font-size: 28px;
             margin: 0 0 10px 0;
-            color: #5e3427; /* Castanho */
             text-transform: uppercase;
         }
 
         #prize-layer p {
             font-size: 16px;
             margin: 0;
-            color: #5e3427; /* Castanho */
+            font-weight: bold;
         }
 
-        /* CAMADA DE COBERTURA (Canvas) */
         #scratch-surface {
             position: absolute;
             top: 0; left: 0;
@@ -88,34 +81,48 @@
             cursor: crosshair;
             touch-action: none;
         }
+
+        .logo-footer {
+            margin-top: 30px;
+        }
+
+        .logo-footer img {
+            width: 160px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
 
     <div class="header-container">
-        <h1>NÃO<br>RESISTA....</h1> <h2>DESCUBRA O RECHEIO!</h2> </div>
+        <h1>NÃO<br>RESISTA....</h1>
+        <h2>DESCUBRA O RECHEIO!</h2>
+    </div>
 
     <div id="wrapper">
         <div id="prize-layer">
-            <h3>OFERTA DE<br>UM BRIGADEIRO</h3> <p>em compras iguais ou superiores a 5€</p> </div>
-
+            <h3>OFERTA DE<br>UM BRIGADEIRO</h3>
+            <p>em compras iguais ou superiores a 5€</p>
+        </div>
         <canvas id="scratch-surface" width="300" height="300"></canvas>
+    </div>
+
+    <div class="logo-footer">
+        <img src="logo.png" alt="Amor às Pedaços Logo">
     </div>
 
 <script>
     const canvas = document.getElementById('scratch-surface');
     const ctx = canvas.getContext('2d');
-    let isPressed = false;
+    let isDrawing = false;
 
-    function setup() {
-        // Cobertura sólida em castanho
+    function init() {
         ctx.fillStyle = '#5e3427'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    function reveal(e) {
-        if (!isPressed) return;
-        
+    function scratch(e) {
+        if (!isDrawing) return;
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
         const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
@@ -126,15 +133,14 @@
         ctx.fill();
     }
 
-    canvas.addEventListener('mousedown', () => isPressed = true);
-    canvas.addEventListener('mouseup', () => isPressed = false);
-    canvas.addEventListener('mousemove', reveal);
-    
-    canvas.addEventListener('touchstart', (e) => { isPressed = true; e.preventDefault(); });
-    canvas.addEventListener('touchend', () => isPressed = false);
-    canvas.addEventListener('touchmove', (e) => { reveal(e); e.preventDefault(); });
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mousemove', scratch);
+    canvas.addEventListener('touchstart', (e) => { isDrawing = true; e.preventDefault(); });
+    canvas.addEventListener('touchend', () => isDrawing = false);
+    canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
 
-    window.onload = setup;
+    window.onload = init;
 </script>
 
 </body>
