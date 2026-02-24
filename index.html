@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspadinha - Brigadeiro</title>
+    <title>Raspadinha Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Chau+Philomene+One&display=swap" rel="stylesheet">
     <style>
         body {
@@ -13,44 +13,45 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f4f4f4;
+            background-color: #ffffff;
             font-family: 'Chau Philomene One', sans-serif;
-            color: #5e3427; /* Castanho [cite: 1, 2, 5, 6] */
+            color: #5e3427; /* Castanho fornecido */
         }
 
-        /* Texto exterior (Página 1) */
-        .header-text {
+        /* TEXTO EXTERIOR (Página 1) */
+        .header-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .header-text h1 {
-            font-size: 32px;
+        .header-container h1 {
+            font-size: 40px;
             margin: 0;
-            line-height: 1.2;
+            line-height: 1;
             text-transform: uppercase;
         }
 
-        .header-text h2 {
+        .header-container h2 {
             font-size: 24px;
-            margin: 5px 0 0 0;
-            color: #ebc5d0; /* Rosa [cite: 3, 4] */
-            -webkit-text-stroke: 0.5px #5e3427;
+            margin: 10px 0 0 0;
+            color: #ebc5d0; /* Rosa fornecido */
+            -webkit-text-stroke: 1px #5e3427;
+            text-transform: uppercase;
         }
 
-        #scratch-container {
+        /* ÁREA DA RASPADINHA */
+        #wrapper {
             position: relative;
             width: 300px;
-            height: 300px; /* Formato quadrado para a raspadinha */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 15px;
-            background: #ebc5d0; /* Rosa  */
+            height: 300px;
+            border: 4px solid #5e3427;
+            border-radius: 10px;
+            background-color: #ebc5d0; /* Rosa por baixo */
             overflow: hidden;
-            border: 5px solid #5e3427;
         }
 
-        /* Página 2: Prémio (Interior) */
-        #prize-content {
+        /* PRÉMIO (Página 2 - O que está por baixo) */
+        #prize-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -61,85 +62,79 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
+            z-index: 1;
         }
 
-        #prize-content h3 {
-            font-size: 26px;
+        #prize-layer h3 {
+            font-size: 28px;
             margin: 0 0 10px 0;
-            color: #5e3427;
+            line-height: 1.2;
         }
 
-        #prize-content p {
-            font-size: 14px;
+        #prize-layer p {
+            font-size: 16px;
             margin: 0;
-            color: #5e3427;
         }
 
-        /* Camada de raspagem */
-        #scratch-canvas {
+        /* CAMADA DE COBERTURA (Canvas) */
+        #scratch-surface {
             position: absolute;
             top: 0; left: 0;
-            z-index: 10;
-            cursor: pointer;
+            z-index: 2;
+            cursor: crosshair;
             touch-action: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="header-text">
+    <div class="header-container">
         <h1>NÃO<br>RESISTA....</h1>
         <h2>DESCUBRA O RECHEIO!</h2>
     </div>
 
-    <div id="scratch-container">
-        <div id="prize-content">
+    <div id="wrapper">
+        <div id="prize-layer">
             <h3>OFERTA DE<br>UM BRIGADEIRO</h3>
             <p>em compras iguais ou superiores a 5€</p>
         </div>
 
-        <canvas id="scratch-canvas" width="300" height="300"></canvas>
+        <canvas id="scratch-surface" width="300" height="300"></canvas>
     </div>
 
 <script>
-    const canvas = document.getElementById('scratch-canvas');
+    const canvas = document.getElementById('scratch-surface');
     const ctx = canvas.getContext('2d');
-    let isDrawing = false;
+    let isPressed = false;
 
-    function init() {
-        // Cor sólida para a raspadinha (Castanho) [cite: 1, 2]
+    // Pintar a cobertura de castanho sólido (Sem texto dentro)
+    function setup() {
         ctx.fillStyle = '#5e3427'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Adicionar um padrão simples para indicar que é para raspar
-        ctx.strokeStyle = '#ebc5d0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(50, 50);
-        ctx.lineTo(250, 250);
-        ctx.stroke();
     }
 
-    function scratch(e) {
-        if (!isDrawing) return;
+    function reveal(e) {
+        if (!isPressed) return;
+        
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
         const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 30, 0, Math.PI * 2);
+        ctx.arc(x, y, 35, 0, Math.PI * 2);
         ctx.fill();
     }
 
-    canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('mouseup', () => isDrawing = false);
-    canvas.addEventListener('mousemove', scratch);
-    canvas.addEventListener('touchstart', (e) => { isDrawing = true; e.preventDefault(); });
-    canvas.addEventListener('touchend', () => isDrawing = false);
-    canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
+    canvas.addEventListener('mousedown', () => isPressed = true);
+    canvas.addEventListener('mouseup', () => isPressed = false);
+    canvas.addEventListener('mousemove', reveal);
+    
+    canvas.addEventListener('touchstart', (e) => { isPressed = true; e.preventDefault(); });
+    canvas.addEventListener('touchend', () => isPressed = false);
+    canvas.addEventListener('touchmove', (e) => { reveal(e); e.preventDefault(); });
 
-    window.onload = init;
+    window.onload = setup;
 </script>
 
 </body>
