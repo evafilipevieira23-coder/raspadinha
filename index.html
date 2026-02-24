@@ -15,7 +15,7 @@
             margin: 0;
             background-color: #ffffff;
             font-family: 'Chau Philomene One', sans-serif;
-            color: #5e3427; /* Castanho fornecido */
+            color: #5e3427; /* Castanho para todo o texto */
         }
 
         /* TEXTO EXTERIOR (Página 1) */
@@ -25,32 +25,34 @@
         }
 
         .header-container h1 {
-            font-size: 40px;
+            font-size: 38px;
             margin: 0;
-            line-height: 1;
+            line-height: 1.1;
             text-transform: uppercase;
+            color: #5e3427; /* Castanho */
         }
 
         .header-container h2 {
             font-size: 24px;
             margin: 10px 0 0 0;
-            color: #ebc5d0; /* Rosa fornecido */
-            -webkit-text-stroke: 1px #5e3427;
+            color: #ebc5d0; /* Rosa */
+            /* Outline em castanho para leitura sobre fundo branco */
+            -webkit-text-stroke: 1px #5e3427; 
             text-transform: uppercase;
         }
 
-        /* ÁREA DA RASPADINHA */
+        /* MOLDURA DA RASPADINHA */
         #wrapper {
             position: relative;
             width: 300px;
             height: 300px;
-            border: 4px solid #5e3427;
-            border-radius: 10px;
-            background-color: #ebc5d0; /* Rosa por baixo */
+            border: 5px solid #5e3427; /* Castanho */
+            border-radius: 15px;
+            background-color: #ebc5d0; /* Rosa */
             overflow: hidden;
         }
 
-        /* PRÉMIO (Página 2 - O que está por baixo) */
+        /* PRÉMIO (Página 2 - Por baixo da raspadinha) */
         #prize-layer {
             position: absolute;
             top: 0; left: 0;
@@ -68,12 +70,14 @@
         #prize-layer h3 {
             font-size: 28px;
             margin: 0 0 10px 0;
-            line-height: 1.2;
+            color: #5e3427; /* Castanho */
+            text-transform: uppercase;
         }
 
         #prize-layer p {
             font-size: 16px;
             margin: 0;
+            color: #5e3427; /* Castanho */
         }
 
         /* CAMADA DE COBERTURA (Canvas) */
@@ -89,15 +93,11 @@
 <body>
 
     <div class="header-container">
-        <h1>NÃO<br>RESISTA....</h1>
-        <h2>DESCUBRA O RECHEIO!</h2>
-    </div>
+        <h1>NÃO<br>RESISTA....</h1> <h2>DESCUBRA O RECHEIO!</h2> </div>
 
     <div id="wrapper">
         <div id="prize-layer">
-            <h3>OFERTA DE<br>UM BRIGADEIRO</h3>
-            <p>em compras iguais ou superiores a 5€</p>
-        </div>
+            <h3>OFERTA DE<br>UM BRIGADEIRO</h3> <p>em compras iguais ou superiores a 5€</p> </div>
 
         <canvas id="scratch-surface" width="300" height="300"></canvas>
     </div>
@@ -107,8 +107,8 @@
     const ctx = canvas.getContext('2d');
     let isPressed = false;
 
-    // Pintar a cobertura de castanho sólido (Sem texto dentro)
     function setup() {
+        // Cobertura sólida em castanho
         ctx.fillStyle = '#5e3427'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
