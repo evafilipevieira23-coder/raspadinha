@@ -13,15 +13,15 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #ebc5d0; /* Rosa Marca */
+            background-color: #ffffff; /* Fundo Branco de novo */
             font-family: 'Chau Philomene One', sans-serif;
-            color: #5e3427; /* Castanho Marca */
-            overflow: hidden;
+            color: #5e3427; /* Castanho da marca */
         }
 
+        /* TEXTO EXTERIOR */
         .header-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .header-container h1 {
@@ -32,22 +32,26 @@
         }
 
         .header-container h2 {
-            font-size: 22px;
-            margin: 5px 0 0 0;
+            font-size: 24px;
+            margin: 10px 0 0 0;
+            color: #ebc5d0; /* Rosa da marca */
+            -webkit-text-stroke: 1px #5e3427; /* Contorno castanho para ler melhor no branco */
             text-transform: uppercase;
         }
 
+        /* MOLDURA DA RASPADINHA */
         #wrapper {
             position: relative;
             width: 300px;
             height: 300px;
             border: 5px solid #5e3427;
             border-radius: 20px;
-            background-color: #ebc5d0;
+            background-color: #ebc5d0; /* Interior da raspadinha continua Rosa */
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(94, 52, 39, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
+        /* PRÉMIO (O que está por baixo) */
         #prize-layer {
             position: absolute;
             top: 0; left: 0;
@@ -66,14 +70,16 @@
             font-size: 28px;
             margin: 0 0 10px 0;
             text-transform: uppercase;
+            color: #5e3427;
         }
 
         #prize-layer p {
             font-size: 16px;
             margin: 0;
-            font-weight: bold;
+            color: #5e3427;
         }
 
+        /* CAMADA DE COBERTURA (O que se raspa) */
         #scratch-surface {
             position: absolute;
             top: 0; left: 0;
@@ -82,12 +88,13 @@
             touch-action: none;
         }
 
+        /* LOGO EM BAIXO */
         .logo-footer {
             margin-top: 30px;
         }
 
         .logo-footer img {
-            width: 160px;
+            width: 180px;
             height: auto;
         }
     </style>
@@ -108,7 +115,7 @@
     </div>
 
     <div class="logo-footer">
-        <img src="logo.png" alt="Amor às Pedaços Logo">
+        <img src="logo.png" alt="Amor às Pedaços">
     </div>
 
 <script>
@@ -116,6 +123,7 @@
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
 
+    // Pintar a cobertura de castanho sólido
     function init() {
         ctx.fillStyle = '#5e3427'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -123,6 +131,7 @@
 
     function scratch(e) {
         if (!isDrawing) return;
+        
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
         const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
@@ -136,6 +145,7 @@
     canvas.addEventListener('mousedown', () => isDrawing = true);
     canvas.addEventListener('mouseup', () => isDrawing = false);
     canvas.addEventListener('mousemove', scratch);
+    
     canvas.addEventListener('touchstart', (e) => { isDrawing = true; e.preventDefault(); });
     canvas.addEventListener('touchend', () => isDrawing = false);
     canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
