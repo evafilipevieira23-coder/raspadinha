@@ -1,106 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raspadinha</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspadinha - Não Resista!</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+        }
 
-<style>
-body {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f4f4f4;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
+        #container {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            user-select: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
-.message {
-  font-size: 20px;
-  margin-bottom: 20px;
-  font-weight: bold;
-}
+        /* Camada de Baixo (O Prémio - Página 2) */
+        #prize {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #4a2c2a; /* Tom de chocolate */
+        }
 
-.card {
-  position: relative;
-  width: 350px;
-  height: 220px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
+        #prize h1 { font-size: 24px; margin-bottom: 10px; color: #d32f2f; }
+        #prize p { font-size: 18px; font-weight: bold; }
+        #prize .small { font-size: 12px; margin-top: 15px; color: #777; }
 
-.prize {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  cursor: pointer;
-}
-</style>
+        /* Camada de Cima (Canvas para raspar - Página 1) */
+        #scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            cursor: crosshair;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="message">
-  Não resistas... Descobre o recheio!
-</div>
+<div id="container">
+    <div id="prize">
+        <h1>OFERTA DE<br>UM BRIGADEIRO</h1>
+        <p>🍫✨</p>
+        <div class="small">em compras iguais ou superiores a 5€</div>
+    </div>
 
-<div class="card">
-  <div class="prize">
-    🎉 Ganhaste um BRIGADEIRO! 🍫<br><br>
-    Válido em compras iguais ou superiores a 5€.
-  </div>
-  <canvas id="scratch"></canvas>
+    <canvas id="scratch-canvas" width="300" height="400"></canvas>
 </div>
 
 <script>
-const canvas = document.getElementById("scratch");
-const ctx = canvas.getContext("2d");
-const card = document.querySelector(".card");
+    const canvas = document.getElementById('scratch-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
 
-canvas.width = card.offsetWidth;
-canvas.height = card.offsetHeight;
+    // Desenhar a "capa" da raspadinha (Página 1)
+    function setupCanvas() {
+        // Fundo castanho/chocolate
+        ctx.fillStyle = '#4a2c2a'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// Camada prateada
-ctx.fillStyle = "#C0C0C0";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Texto da capa
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('NÃO', canvas.width/2, 120);
+        ctx.fillText('RESISTA....', canvas.width/2, 160);
+        
+        ctx.font = '20px Arial';
+        ctx.fillText('DESCUBRA O', canvas.width/2, 240);
+        
+        ctx.font = 'bold 24px Arial';
+        ctx.fillStyle = '#ffd700'; // Dourado para o "RECHEIO"
+        ctx.fillText('RECHEIO!', canvas.width/2, 280);
+    }
 
-// Função raspar
-function scratch(e) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    function scratch(e) {
+        if (!isDrawing) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
 
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.beginPath();
-  ctx.arc(x, y, 20, 0, Math.PI * 2);
-  ctx.fill();
-}
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 25, 0, Math.PI * 2);
+        ctx.fill();
+    }
 
-canvas.addEventListener("mousemove", (e) => {
-  if (e.buttons === 1) scratch(e);
-});
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mousemove', scratch);
+    
+    // Suporte para Mobile
+    canvas.addEventListener('touchstart', (e) => { isDrawing = true; e.preventDefault(); });
+    canvas.addEventListener('touchend', () => isDrawing = false);
+    canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
 
-canvas.addEventListener("touchmove", (e) => {
-  scratch(e);
-});
+    setupCanvas();
 </script>
 
 </body>
