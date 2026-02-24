@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raspadinha - Não Resista!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chau+Philomene+One&display=swap" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -12,61 +13,65 @@
             height: 100vh;
             margin: 0;
             background-color: #f4f4f4;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Chau Philomene One', sans-serif;
         }
 
-        #container {
+        #scratch-container {
             position: relative;
-            width: 300px;
-            height: 400px;
-            user-select: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 320px;
+            height: 480px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             border-radius: 15px;
+            background: #ebc5d0; /* Rosa */
             overflow: hidden;
         }
 
-        /* Camada de Baixo (O Prémio - Página 2) */
-        #prize {
+        /* Página 2: O Prémio */
+        #prize-content {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             box-sizing: border-box;
-            color: #4a2c2a; /* Tom de chocolate */
         }
 
-        #prize h1 { font-size: 24px; margin-bottom: 10px; color: #d32f2f; }
-        #prize p { font-size: 18px; font-weight: bold; }
-        #prize .small { font-size: 12px; margin-top: 15px; color: #777; }
+        #prize-content h2 {
+            font-size: 32px;
+            color: #5e3427; /* Castanho */
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
 
-        /* Camada de Cima (Canvas para raspar - Página 1) */
+        #prize-content p {
+            font-size: 18px;
+            color: #5e3427; /* Castanho */
+            margin: 0;
+        }
+
+        /* Página 1: A Capa */
         #scratch-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             z-index: 10;
             cursor: crosshair;
+            touch-action: none;
         }
     </style>
 </head>
 <body>
 
-<div id="container">
-    <div id="prize">
-        <h1>OFERTA DE<br>UM BRIGADEIRO</h1>
-        <p>🍫✨</p>
-        <div class="small">em compras iguais ou superiores a 5€</div>
+<div id="scratch-container">
+    <div id="prize-content">
+        <h2>OFERTA DE<br>UM BRIGADEIRO</h2>
+        <p>em compras iguais ou superiores a 5€</p>
     </div>
 
-    <canvas id="scratch-canvas" width="300" height="400"></canvas>
+    <canvas id="scratch-canvas" width="320" height="480"></canvas>
 </div>
 
 <script>
@@ -74,50 +79,48 @@
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
 
-    // Desenhar a "capa" da raspadinha (Página 1)
-    function setupCanvas() {
-        // Fundo castanho/chocolate
-        ctx.fillStyle = '#4a2c2a'; 
+    function init() {
+        // Fundo Castanho #5e3427
+        ctx.fillStyle = '#5e3427'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Texto da capa
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 28px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('NÃO', canvas.width/2, 120);
-        ctx.fillText('RESISTA....', canvas.width/2, 160);
+        ctx.fillStyle = '#ffffff';
         
-        ctx.font = '20px Arial';
-        ctx.fillText('DESCUBRA O', canvas.width/2, 240);
+        // Configuração do Texto da Página 1 com Chau Philomene One
+        ctx.font = "38px 'Chau Philomene One'";
+        ctx.fillText('NÃO', canvas.width/2, 120); 
+        ctx.fillText('RESISTA....', canvas.width/2, 175); 
         
-        ctx.font = 'bold 24px Arial';
-        ctx.fillStyle = '#ffd700'; // Dourado para o "RECHEIO"
-        ctx.fillText('RECHEIO!', canvas.width/2, 280);
+        ctx.font = "24px 'Chau Philomene One'";
+        ctx.fillText('DESCUBRA O', canvas.width/2, 300); 
+        
+        ctx.font = "34px 'Chau Philomene One'";
+        ctx.fillStyle = '#ebc5d0'; // Rosa
+        ctx.fillText('RECHEIO!', canvas.width/2, 350); 
     }
 
     function scratch(e) {
         if (!isDrawing) return;
-        
         const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 25, 0, Math.PI * 2);
+        ctx.arc(x, y, 35, 0, Math.PI * 2);
         ctx.fill();
     }
 
     canvas.addEventListener('mousedown', () => isDrawing = true);
     canvas.addEventListener('mouseup', () => isDrawing = false);
     canvas.addEventListener('mousemove', scratch);
-    
-    // Suporte para Mobile
     canvas.addEventListener('touchstart', (e) => { isDrawing = true; e.preventDefault(); });
     canvas.addEventListener('touchend', () => isDrawing = false);
     canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
 
-    setupCanvas();
+    // Garante que a fonte do Google Fonts carrega antes de desenhar a capa
+    document.fonts.ready.then(init);
 </script>
 
 </body>
